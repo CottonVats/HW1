@@ -14,16 +14,26 @@ def file_list(request, date=None):
 
     if date:
         context['date'] = date.date()
-
-    for file in FILES_ARRAY:
-        file_stat = os.stat(f'{settings.FILES_PATH}/{file}')
-        file_info = {
-            'name': file,
-            'ctime': dt.datetime.fromtimestamp(file_stat.st_ctime),
-            'mtime': dt.datetime.fromtimestamp(file_stat.st_mtime),
-        }
-        all_files.append(file_info)
-    return render(request, template_name, context={'files': all_files})
+        for file in FILES_ARRAY:
+            file_stat = os.stat(f'{settings.FILES_PATH}/{file}')
+            file_info = {
+                'name': file,
+                'ctime': dt.datetime.fromtimestamp(file_stat.st_ctime),
+                'mtime': dt.datetime.fromtimestamp(file_stat.st_mtime),
+            }
+            if file_info['ctime'] == date or file_info['mtime'] == date:
+                all_files.append(file_info)
+        return render(request, template_name, context={'files': all_files})
+    else:
+        for file in FILES_ARRAY:
+            file_stat = os.stat(f'{settings.FILES_PATH}/{file}')
+            file_info = {
+                'name': file,
+                'ctime': dt.datetime.fromtimestamp(file_stat.st_ctime),
+                'mtime': dt.datetime.fromtimestamp(file_stat.st_mtime),
+            }
+            all_files.append(file_info)
+        return render(request, template_name, context={'files': all_files})
 
 
 def file_content(request, name):
